@@ -134,13 +134,3 @@ def admin_overdue():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
-
-@app.route('/update_server', methods=['GET','POST'])
-def webhook():
-    if request.method == 'POST':
-        repo = git.Repo('/Users/mizuki/One Drive/OneDrive - Lincoln University/COMP636 - Software Development/python/project')
-        origin = repo.remotes.origin
-        origin.pull()
-        return 'Updated PythonAnywhere successfully', 200
-    else:
-        return 'Wrong event type', 400
