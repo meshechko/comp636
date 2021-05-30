@@ -1,0 +1,46 @@
+{% extends 'layout.html'%}
+{% block title %}
+Overdue
+{% endblock title %}
+
+{% block content %}
+
+
+<div class="row mt-5">
+    <div class="col-md-6 ">
+        <h1>Overdue</h1>
+    </div>
+
+</div>
+
+{% if books|length > 0 %}
+<div class="row mt-5">
+    <table class="table table-hover">
+        <thead class="thead-inverse">
+            <tr>
+                <th scope="col">Book</th>
+                <th scope="col">Branch</th>
+                <th scope="col">Borrower</th>
+                <th scope="col">Overdue days</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr scope="row">
+                <td><a href="{{ url_for( 'admin_book', book_id=book.BookId ) }}">{{ book.Title }}</a></td>
+                <td>{{ book.BranchName }}</td>
+                <td><a href="{{ url_for( 'admin_borrower', card_no=book.CardNo ) }}">{{ book.BorrowerName }}</a></td>
+                <td>{{ book.OverDueDays }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block bottom %}
+{% if books|length == 0 %}
+<h2>Nothing found</h2>
+{% endif %}
+{% endblock bottom %}

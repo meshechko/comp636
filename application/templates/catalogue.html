@@ -1,0 +1,128 @@
+{% extends 'layout.html'%}
+{% block title %}
+Catalogue
+{% endblock title %}
+
+{% block content %}
+
+
+
+
+<div class="row mt-5">
+    <div class="col-md-6">
+        <h1>Books</h1>
+    </div>
+    <div class="col-md-6">
+        <form method="POST" action="">
+            <div class="input-group">
+
+                {{ form.csrf_token }}
+
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">Search Book by</span>
+                </div>
+                {{ form.title() }}
+                <div class="input-group-prepend input-group-append">
+                    {{ form.condition_concat()}}
+                </div>
+                {{ form.author()}}
+                <div class="input-group-append">
+                    <button class="btn btn-info" type="input" id="button-addon2"><i class="bi bi-search"></i></button>
+
+                </div>
+            </div>
+        </form>
+        {% if form.title.errors %}
+        
+        <p class="text-danger">{% for error in form.title.errors %}{{ error }}{% endfor %}</p>
+
+        {% endif %}
+    </div>
+
+
+
+
+
+
+
+</div>
+{% if is_post and books|length > 0 %}
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="text-right">
+
+
+
+            <a
+                href="{% if admin_catalogue %} {{ url_for( 'admin_catalogue') }}  {% else %} {{ url_for( 'catalogue') }} {% endif %}">Show
+                all</a>
+
+
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if books|length > 0 %}
+<div class="row mt-5">
+
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Publisher</th>
+                <th scope="col">Author</th>
+                <th scope="col">Available in</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr scope="row">
+                <td>
+                    {% if admin_catalogue %}
+                    <a href="{{ url_for( 'admin_book', book_id=book.BookId ) }}">{{ book.Title }}</a>
+                    {% else %}
+                    {{ book.Title }}
+                    {% endif %}
+
+                </td>
+                <td>{{ book.PublisherName }}</td>
+                <td>{{ book.AuthorName }}</td>
+                <td>{% for branch in branches %}
+                    {% if branch.BookId == book.BookId %}
+                    {{ branch.BranchName }}
+                    {% if branch.No_On_Loan == branch.No_Of_Copies %}
+                    - Not available until: {{ branch.DueDate.strftime('%A, %d %B %Y') }}
+                    {% else %}
+                    - copies available:
+                    {% if branch.No_Of_Available %}
+                    {{ branch.No_Of_Available }} of {{ branch.No_Of_Copies }}
+                    {% else %}
+                    {{ branch.No_Of_Copies }}
+                    {% endif %}
+                    {% endif %}
+                    <br>
+                    {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock content %}
+
+
+
+{% block bottom %}
+{% if books|length == 0 %}
+<h2>Nothing found</h2>
+<a class="btn btn-primary"
+    href="{% if admin_catalogue %} {{ url_for( 'admin_catalogue') }}  {% else %} {{ url_for( 'catalogue') }} {% endif %}">Show
+    all books</a>
+{% endif %}
+{% endblock bottom %}

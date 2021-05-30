@@ -1,0 +1,84 @@
+{% extends 'layout.html'%}
+{% block title %}
+Borrower - {{ borrower.Name }}
+{% endblock title %}
+
+{% block content %}
+
+
+
+<div class="row mt-5">
+    <div class="col-md-8">
+        <h1>{{ borrower.Name }}</h1>
+    </div>
+    <div class="col-md-4">
+        <address><abbr title="Card number">Card number: </abbr>{{ borrower.CardNo }}</address>
+        <address><abbr title="Address">Address: </abbr>{{ borrower.Address }}</address>
+        <address><abbr title="Phone">Phone: </abbr>{{ borrower.Phone }}</address>
+    </div>
+
+</div>
+
+
+
+
+
+
+{% if borrower_loans|length > 0%}
+<div class="row mt-5">
+    <div class="col-md-12">
+
+        <h2>Borrowed books:</h2>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Out Date</th>
+                    <th scope="col">Due date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in borrower_loans %}
+                <tr scope="row">
+                    <td><a href="{{ url_for( 'admin_book', book_id=book.BookId ) }}">{{ book.Title }}</a></td>
+                    <td>{{ book.DateOut.strftime('%A, %d %B %Y') }}</td>
+                    <td>{{ book.DueDate.strftime('%A, %d %B %Y') }}
+                        {% if book.OverDueDays > 0 and book.Status == 'On Loan' %}
+                        <span class="badge badge-danger">Overdue: {{book.OverDueDays}} days</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ book.Status }}</td>
+                    <td>{% if book.Status == 'On Loan' %}
+
+
+                        <form method="POST">
+                            {% for form in return_book_forms %}
+                                {% if form.book_id.data == book.BookId and form.status.data == 'On Loan'%}
+                                    {{ form.csrf_token }}
+                                    {{ form.book_id(value=book.BookId) }}
+                                    {{ form.branch_id(value=book.BranchId) }}
+                                    {{ form.card_no(value=book.CardNo) }}
+                                    {{ form.date_out(value=book.DateOut) }}
+                                    {{ form.date_due(value=book.DueDate) }}
+                                    {{ form.button_return}}
+                                {% endif %}
+                            {% endfor %}
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+{% endif %}
+
+{% endblock content %}

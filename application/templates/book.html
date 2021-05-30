@@ -1,0 +1,171 @@
+{% extends 'layout.html'%}
+{% block title %}
+Book - {{ book.Title }}
+{% endblock title %}
+
+
+{% block content %}
+
+<div class="row mt-5">
+    <div class="col-md-12">
+
+        <h1>{{ book.Title }}
+            <small class="text-muted">by {{ book.AuthorName }}, published by {{ book.PublisherName }}</small>
+
+        </h1>
+    </div>
+</div>
+
+
+
+{% for branch in branches %}
+
+<div class="row mt-5">
+    <div class="col-md-6">
+        <h3>{{ branch.BranchName }}</h3>
+        <address><abbr title="Address">Address: </abbr>{{ branch.Address }}</address>
+    </div>
+
+    <div class="col-md-6">
+
+        {% if branch.No_On_Loan != branch.No_Of_Copies %}
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="alert alert-success" role="alert">
+                    {% if branch.No_Of_Available %}
+
+                    Copies available: {{ branch.No_Of_Available }} of {{ branch.No_Of_Copies }}
+
+                    {% else %}
+
+                    Copies available: {{ branch.No_Of_Copies }}
+
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+
+
+                {% for form in branch_forms %}
+                {% if form.branch_id.data == branch.BranchId %}
+
+                <form action="" method="post">
+                    <div class="input-group">
+
+                        {{ form.csrf_token }}
+                        {{ form.book_id(value=book.BookId) }}
+                        {{ form.branch_id(value=branch.BranchId) }}
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon3">Lend book to</span>
+                        </div>
+                        {{ form.borrowers_input(id=branch.BranchId~"-borrowers_input", list="borrowers-" ~
+                        branch.BranchId) }}
+                        
+                        <datalist id="borrowers-{{branch.BranchId}}">
+                            {% for borrower in borrowers %}
+                            <option value="{{borrower.Name }} | {{ borrower.CardNo }}">
+                                {% endfor %}
+                        </datalist>
+                        <div class="input-group-append">
+                            {{form.button_lend}}
+                        </div>
+                    </div>
+                    {% if form.borrowers_input.errors %}
+
+                <p class="text-danger">{{ form.borrowers_input.errors[0] }}</p>
+
+                {% endif %}
+                </form>
+                
+                {% endif %}
+                {% endfor %}
+
+
+
+
+            </div>
+        </div>
+
+        {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-danger" role="alert">
+                    Not available until: {{ branch.DueDate.strftime('%A, %d %B %Y') }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+
+    {% if branch.No_On_Loan %}
+    <div class="col-md-12 mt-3">
+        <h5>Book loan details</h5>
+        <table class="table table-hover">
+            <thead class="thead-inverse">
+                <tr>
+                    <th scope="col">Borrower</th>
+                    <th scope="col">Card No</th>
+                    <th scope="col">Out Date</th>
+                    <th scope="col">Due date</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for borrower in current_borrowers %}
+
+                {% if branch.BranchId == borrower.BranchId %}
+
+                <tr scope="row">
+                    <td><a href="{{ url_for( 'admin_borrower', card_no=borrower.CardNo ) }}">{{ borrower.Name }}</a>
+                    </td>
+                    <td>{{ borrower.CardNo }}</td>
+                    <td>{{ borrower.DateOut.strftime('%A, %d %B %Y') }}</td>
+                    <td>
+
+                        {{ borrower.DueDate.strftime('%A, %d %B %Y') }}
+                        {% if borrower.OverDueDays > 0 %}
+                        <span class="badge badge-danger">Overdue: {{borrower.OverDueDays}} days</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="text-right">
+                            <form method="POST">
+                                {% for form in return_book_forms %}
+                                    {% if form.card_no.data == borrower.CardNo %}
+                                        {{ form.csrf_token }}
+                                        {{ form.book_id(value=borrower.BookId) }}
+                                        {{ form.branch_id(value=borrower.BranchId) }}
+                                        {{ form.card_no(value=borrower.CardNo) }}
+                                        {{ form.date_out(value=borrower.DateOut) }}
+                                        {{ form.date_due(value=borrower.DueDate) }}
+                                        
+                                        {{ form.button_return}}
+                                    {% endif %}
+                                {% endfor %}
+                            </form>
+                        </div>
+                    </td>
+
+                </tr>
+
+                {% endif %}
+                {% endfor %}
+
+
+
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% if not loop.last %}
+<hr>
+{% endif %}
+
+{% endfor %}
+
+{% endblock content %}

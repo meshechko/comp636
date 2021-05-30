@@ -1,0 +1,12 @@
+<nav class="nav nav-pills">
+  <a class="flex-sm-fill text-sm-center nav-link{% if admin_catalogue %} active {% endif %}"
+    href="{{url_for('admin_catalogue')}}">Search Books</a>
+  <a class="flex-sm-fill text-sm-center nav-link {% if admin_borrowers_page %} active {% endif %}"
+    href="{{url_for('admin_borrowers')}}">Search Borrowers</a>
+  <a class="flex-sm-fill text-sm-center nav-link {% if admin_overdue_page %} active {% endif %}"
+    href="{{url_for('admin_overdue')}}">Overdue</a>
+  {% if admin_book_page %} <a class="flex-sm-fill text-sm-center nav-link active"
+    href="{{url_for('admin_book', book_id=book.BookId)}}">Book</a>{% endif %}
+  {% if admin_borrower_page %}<a class="flex-sm-fill text-sm-center nav-link active"
+    href="{{ url_for('admin_borrower', card_no=borrower.CardNo) }}">Borrower</a>{% endif %}
+</nav>
