@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, HiddenField, SubmitField, validators, ValidationError
-import application.models as SQL
+from wtforms import StringField, SelectField, HiddenField, SubmitField, ValidationError
 
 
 class Search_Book(FlaskForm):
@@ -45,7 +44,6 @@ class Borrowers_Lend(FlaskForm):
     card_no = HiddenField()
     error = StringField()
     button_lend = SubmitField("Lend", render_kw={"class":"btn btn-primary"})
-
 
 class Return_Book(FlaskForm):
     book_id = HiddenField()
