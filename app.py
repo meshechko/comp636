@@ -93,10 +93,10 @@ def admin_book(book_id=None):
                 date_out = date.today()
                 date_due = date_out + timedelta(days=28)
 
-                #check if borrower already lent this book earlier and has not returned yet
-                borrower_already_lent_book = bool(len(db.get_book_current_borrowers(book_id=book_id, card_no=card_no)))
-                if borrower_already_lent_book:
-                    form.borrowers_input.errors.append("Borrower has already lent this book. Only one book per borrower is allowed.")
+                #check if user already borrowed this book earlier and has not returned yet
+                user_already_borrowed_book = bool(len(db.get_book_current_borrowers(book_id=book_id, card_no=card_no)))
+                if user_already_borrowed_book:
+                    form.borrowers_input.errors.append("User has already borrowed this book. Only one book per borrower is allowed.")
                 else:
                     #lend book if borrower didn't lend it yet
                     db.lend_book(book_id=book_id, branch_id=branch_id, card_no=card_no, date_due=date_due, date_out=date_out)
