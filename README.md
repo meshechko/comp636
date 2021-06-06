@@ -2,7 +2,7 @@
 
 ## Demo
 
-View demo - [olexiy.pythonanywhere.com](http://http://olexiy.pythonanywhere.com)
+View demo - [olexiy.pythonanywhere.com](http://olexiy.pythonanywhere.com)
 
 ## Overview
 
