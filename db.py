@@ -1,4 +1,3 @@
-from mysql.connector import connection
 import connect
 import mysql.connector
 connection = None
@@ -22,7 +21,7 @@ def get_borrower(card_no):
     return borrower
 
 #returns all borrower loans (past and present)
-def get_borrower_loans(card_no):  
+def get_borrower_loans(card_no):
     cur = get_cursor()
     cur.execute("SELECT bl.BookId, bl.CardNo, bl.BranchId, b.Title, bl.DateOut, bl.DueDate, DATEDIFF(DATE(NOW()), Date(bl.DueDate)) as OverDueDays, IF(bl.returned=0, 'On Loan', 'Returned') as Status FROM Book_Loans bl  JOIN Book b ON bl.BookId = b.BookId WHERE bl.CardNo =%s;", (int(card_no),))
     borrower_loans = cur.fetchall()
@@ -49,7 +48,7 @@ def return_book(book_id, branch_id, card_no, date_out, date_due):
 #executes INSERT query when a book is lent
 def lend_book(book_id, branch_id, card_no, date_due, date_out):
     cur = get_cursor()
-    cur.execute("INSERT INTO Book_Loans (BookId, BranchId, CardNo, DateOut, DueDate, returned) VALUES( %s, %s, %s, %s, %s, 0 );", (book_id, branch_id, card_no, date_out, date_due))    
+    cur.execute("INSERT INTO Book_Loans (BookId, BranchId, CardNo, DateOut, DueDate, returned) VALUES( %s, %s, %s, %s, %s, 0 );", (book_id, branch_id, card_no, date_out, date_due))
     return True
 
 #TODO
@@ -68,11 +67,11 @@ def get_all_branches(book_id=None):
 #TODO
 #returns a list of books. If not params supplied then returns all books, if only book ID is supplied than shows only one book data and also used to search books by author and/or book name
 def get_books(book_id=None, title=None, author=None, condition_concat=None):
-   
+
     condition = ""
     where = ""
 
-    #if only book ID is supplied than shows only one book data 
+    #if only book ID is supplied than shows only one book data
     if book_id:
         condition += f"b.BookId = '{book_id}'"
 
@@ -88,11 +87,11 @@ def get_books(book_id=None, title=None, author=None, condition_concat=None):
 
         if title:
             condition += f"b.Title LIKE '%{title}%' {condition_concat} "
-        
+
         if author:
             condition += f"a.AuthorName LIKE '%{author}%'"
 
-    
+
 
     cur = get_cursor()
     cur.execute(f"SELECT b.BookId, b.Title, b.PublisherName, a.AuthorName FROM Book as b JOIN Author as a ON b.Author=a.AuthorId {where} {condition};")
