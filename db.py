@@ -47,7 +47,9 @@ def return_book(book_id, branch_id, card_no, date_out, date_due):
     conn = mysql.connector.connect(user=connect.dbuser, password=connect.dbpassword, host=connect.dbhost, database=connect.dbname, autocommit=True)
 
     cur = conn.cursor(dictionary=True)
+
     cur.execute("UPDATE Book_Loans SET returned=1 WHERE BookId=%s AND BranchId =%s AND CardNo=%s AND DateOut=%s AND DueDate=%s AND returned = 0 LIMIT 1;", (book_id, branch_id, card_no, date_out, date_due))
+    print(card_no)
     conn.close()
     cur.close()
     return True

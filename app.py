@@ -35,7 +35,7 @@ def helper_return_book(form=None):
 def helper_generate_return_book_forms(list):
     return_book_forms = []
     for book in list:
-        form = Return_Book()
+        form = Return_Book(prefix=str(book["CardNo"]))
         form.card_no.data = book["CardNo"]
         form.book_id.data = book["BookId"]
         form.status.data = book["Status"]
