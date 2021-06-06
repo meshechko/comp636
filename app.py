@@ -77,7 +77,7 @@ def admin_book(book_id=None):
         form.branch_id.data = branch["BranchId"]
         branch_forms.append(form)
 
-    #identify a form for which form was submitted
+    #identify which form was submitted
     for form in branch_forms:
         if request.method == "POST" and form.validate_on_submit():
 
@@ -112,7 +112,7 @@ def admin_book(book_id=None):
                     if form.borrowers_input.data not in borrowers:
                         form.borrowers_input.errors.append("Borrower not found.")
 
-    #holds a list of “return book” forms (button and hidden fields)
+    #list of “return book” forms (button and hidden fields)
     return_book_forms = helper_generate_return_book_forms(db.get_book_current_borrowers(book_id))
 
     for form in return_book_forms:
@@ -133,7 +133,6 @@ def admin_book(book_id=None):
     current_borrowers = db.get_book_current_borrowers(book_id)
     
     return render_template("book.html", book = book[0], branches=branches, borrowers=borrowers, current_borrowers=current_borrowers, admin_book_page=True, return_book_forms=return_book_forms, branch_forms=branch_forms)
-
 
 @app.route("/admin/borrower/<int:card_no>", methods=["GET", "POST"])
 def admin_borrower(card_no = None):
