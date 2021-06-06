@@ -2,7 +2,8 @@
 
 ## Demo
 
-View demo - [olexiy.pythonanywhere.com](http://olexiy.pythonanywhere.com)
+View user demo - [olexiy.pythonanywhere.com](http://olexiy.pythonanywhere.com)
+View admin demo - [olexiy.pythonanywhere.com/admin](http://olexiy.pythonanywhere.com/admin)
 
 ## Overview
 
